@@ -1,0 +1,33 @@
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: Java kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Android SDK kur
+        uses: android-actions/setup-android@v3
+
+      - name: Gradle kur
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: APK derle (debug)
+        run: gradle assembleDebug --stacktrace
+
+      - name: APK'yı yükle (indirilebilir hale getir)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tcl-launcher-apk
+          path: app/build/outputs/apk/debug/*.apk
