@@ -29,8 +29,12 @@ enum class RowType {
  */
 @Serializable
 data class LauncherSettings(
-    val wallpaperUri: String? = null,
+    val wallpaperUri: String? = null,       // Eski tek-resim ayarı (geriye dönük uyumluluk için tutuluyor)
+    val wallpaperUris: List<String> = emptyList(),
+    val wallpaperIntervalMinutes: Int = 15,
     val darkTheme: Boolean = true,
     val accentColorHex: String = "#1565C0",
-    val showClock: Boolean = true
+    val showClock: Boolean = true,
+    val showWeather: Boolean = false,
+    val weatherCity: String = ""
 )

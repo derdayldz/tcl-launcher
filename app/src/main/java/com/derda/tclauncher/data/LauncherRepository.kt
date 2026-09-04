@@ -24,6 +24,7 @@ class LauncherRepository(private val context: Context) {
     private val ROWS_KEY = stringPreferencesKey("rows_json")
     private val SETTINGS_KEY = stringPreferencesKey("settings_json")
     private val RECENT_KEY = stringPreferencesKey("recent_packages_json")
+    private val HIDDEN_KEY = stringPreferencesKey("hidden_packages_json")
 
     // ---------- Satırlar ----------
 
@@ -77,6 +78,24 @@ class LauncherRepository(private val context: Context) {
             else runCatching { json.decodeFromString<List<String>>(raw) }.getOrElse { emptyList() }
             val updated = (listOf(packageName) + current.filter { it != packageName }).take(20)
             prefs[RECENT_KEY] = json.encodeToString(updated)
+        }
+    }
+
+    // ---------- Gizlenen uygulamalar ----------
+
+    val hiddenPackagesFlow: Flow<Set<String>> = context.dataStore.data.map { prefs ->
+        val raw = prefs[HIDDEN_KEY]
+        if (raw.isNullOrBlank()) emptySet()
+        else runCatching { json.decodeFromString<Set<String>>(raw) }.getOrElse { emptySet() }
+    }
+
+    suspend fun setAppHidden(packageName: String, hidden: Boolean) {
+        context.dataStore.edit { prefs ->
+            val raw = prefs[HIDDEN_KEY]
+            val current = if (raw.isNullOrBlank()) emptySet()
+            else runCatching { json.decodeFromString<Set<String>>(raw) }.getOrElse { emptySet() }
+            val updated = if (hidden) current + packageName else current - packageName
+            prefs[HIDDEN_KEY] = json.encodeToString(updated)
         }
     }
 }

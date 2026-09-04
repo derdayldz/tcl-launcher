@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.derda.tclauncher.ui.HomeScreen
+import com.derda.tclauncher.ui.SearchScreen
 import com.derda.tclauncher.ui.SettingsScreen
 import com.derda.tclauncher.ui.theme.TclLauncherTheme
 import com.derda.tclauncher.ui.theme.parseHexColor
@@ -15,6 +16,7 @@ import com.derda.tclauncher.ui.theme.parseHexColor
 sealed class Screen {
     object Home : Screen()
     object Settings : Screen()
+    object Search : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -38,9 +40,15 @@ class MainActivity : ComponentActivity() {
                     is Screen.Home -> HomeScreen(
                         modifier = Modifier.fillMaxSize(),
                         repository = app.repository,
-                        onOpenSettings = { screen = Screen.Settings }
+                        onOpenSettings = { screen = Screen.Settings },
+                        onOpenSearch = { screen = Screen.Search }
                     )
                     is Screen.Settings -> SettingsScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        repository = app.repository,
+                        onBack = { screen = Screen.Home }
+                    )
+                    is Screen.Search -> SearchScreen(
                         modifier = Modifier.fillMaxSize(),
                         repository = app.repository,
                         onBack = { screen = Screen.Home }
